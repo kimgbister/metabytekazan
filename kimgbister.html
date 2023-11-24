@@ -12,7 +12,28 @@
       margin: 0;
       background: linear-gradient(to bottom, #3498db, #f39c12)
     }
+   #container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
 
+        #titles {
+            text-align: left;
+            margin-left: 20px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin: 0;
+            color: #fff;
+        }
     #board {
       display: grid;
       grid-template-columns: repeat(7, 50px);
@@ -297,6 +318,10 @@
   </script>
 </head>
 <body>
+     <div id="container">
+        <div id="titles">
+            <h1>Dörtle, MetaByte Kazan! </h1>
+            <h2>Rakibini yenmek için dikey, yatay veya çapraz olarak dört taşını sırala!</h2>
   <div id="board">
     <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
     <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
