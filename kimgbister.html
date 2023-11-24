@@ -14,29 +14,27 @@
     }
 
         #titles {
-            text-align: left;
+            text-align: center;
             margin-left: 20px;
         }
 
         h1 {
             font-size: 32px;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             color: #fff;
         }
 
         h2 {
-            font-size: 24px;
-            margin: 0;
+            font-size: 16px;
+            margin: 5;
             color: #fff;
         }
     #board {
       display: grid;
       grid-template-columns: repeat(7, 50px);
       grid-template-rows: repeat(6, 50px);
+      justify-content: center;
       gap: 2px;
-      background-color: #add8e6; /* Mavi renkli tahta arkaplanı */
-      border: 2px solid #800080; /* Mor renkli tahta kenar rengi */
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Gölge efekti */
     }
 
     .cell {
