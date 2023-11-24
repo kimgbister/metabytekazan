@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+     body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(to bottom, #3498db, #f39c12)
+    }
+
+        #titles {
+            text-align: center;
+            margin-left: 20px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        h2 {
+            font-size: 16px;
+            margin: 5;
+            color: #fff;
+        }
+    #board {
+      display: grid;
+      grid-template-columns: repeat(7, 50px);
+      grid-template-rows: repeat(6, 50px);
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .cell {
+      width: 50px;
+      height: 50px;
+      border: 2px solid #800080; /* Mor renkli coin kenar rengi */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      cursor: pointer;
+      background-color: #fff; /* Beyaz renkli coin arkaplanı */
+    }
+    
+    .cell:empty {
+      background-color: #87ceeb; /* Hafif mavi renkli boş coin arkaplanı */
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333; /* Siyah renkli mesaj yazısı */
+    }
+
+    #restartButton {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      display: none;
+      background-color: #4caf50; /* Yeşil renkli tekrar oyna düğmesi */
+      color: #fff; /* Beyaz renkli tekrar oyna yazısı */
+      border: none;
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: #ffd700; /* Sarı renkli pop-up arka plan */
+      text-align: center;
+      border: 2px solid #ff4500; /* Turuncu renkli pop-up kenar rengi */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Gölge efekti */
+      display: none;
+    }
+
+    #rewardButton {
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #ff4500; /* Turuncu renkli ödül al düğmesi */
+      color: #fff; /* Beyaz renkli ödül al yazısı */
+      border: none;
+    }
+
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const board = document.getElementById('board');
+      const cells = document.querySelectorAll('.cell');
+      const message = document.getElementById('message');
+      const restartButton = document.getElementById('restartButton');
+      const popup = document.querySelector('.popup');
+      const rewardButton = document.getElementById('rewardButton');
+      const playAgainButton = document.getElementById('playAgainButton');
+
+      let currentPlayer = 'X';
+      let gameBoard = [
+        ['', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '']
+      ];
+
+      function renderBoard() {
+        for (let row = 0; row < 6; row++) {
+          for (let col = 0; col < 7; col++) {
+            cells[row * 7 + col].textContent = gameBoard[row][col];
+          }
+        }
+      }
+
+      function checkWinner() {
+        for (let row = 0; row < 6; row++) {
+          for (let col = 0; col < 4; col++) {
+            if (
+              gameBoard[row][col] !== '' &&
+              gameBoard[row][col] === gameBoard[row][col + 1] &&
+              gameBoard[row][col] === gameBoard[row][col + 2] &&
+              gameBoard[row][col] === gameBoard[row][col + 3]
+            ) {
+              showPopupMessage(currentPlayer === 'X' ? 'Tebrikler! 1.000 MetaByte kazandın!' : 'Rakibin kazandı! Teselli ödülü 500 MetaByte kazandın!');
+              showPopupButtons();
+              return true;
+            }
+          }
+        }
+
+        for (let row = 0; row < 3; row++) {
+          for (let col = 0; col < 7; col++) {
+            if (
+              gameBoard[row][col] !== '' &&
+              gameBoard[row][col] === gameBoard[row + 1][col] &&
+              gameBoard[row][col] === gameBoard[row + 2][col] &&
+              gameBoard[row][col] === gameBoard[row + 3][col]
+            ) {
+              showPopupMessage(currentPlayer === 'X' ? 'Tebrikler! 1.000 MetaByte kazandın!' : 'Rakibin kazandı! Teselli ödülü 500 MetaByte kazandın!');
+              showPopupButtons();
+              return true;
+            }
+          }
+        }
+
+        for (let row = 0; row < 3; row++) {
+          for (let col = 0; col < 4; col++) {
+            if (
+              gameBoard[row][col] !== '' &&
+              gameBoard[row][col] === gameBoard[row + 1][col + 1] &&
+              gameBoard[row][col] === gameBoard[row + 2][col + 2] &&
+              gameBoard[row][col] === gameBoard[row + 3][col + 3]
+            ) {
+              showPopupMessage(currentPlayer === 'X' ? 'Tebrikler! 1.000 MetaByte kazandın!' : 'Rakibin kazandı! Teselli ödülü 500 MetaByte kazandın!');
+              showPopupButtons();
+              return true;
+            }
+          }
+        }
+
+        for (let row = 0; row < 3; row++) {
+          for (let col = 3; col < 7; col++) {
+            if (
+              gameBoard[row][col] !== '' &&
+              gameBoard[row][col] === gameBoard[row + 1][col - 1] &&
+              gameBoard[row][col] === gameBoard[row + 2][col - 2] &&
+              gameBoard[row][col] === gameBoard[row + 3][col - 3]
+            ) {
+              showPopupMessage(currentPlayer === 'X' ? 'Tebrikler! 1.000 MetaByte kazandın!' : 'Rakibin kazandı! Teselli ödülü 500 MetaByte kazandın!');
+              showPopupButtons();
+              return true;
+            }
+          }
+        }
+
+        return false;
+      }
+
+      function showPopupMessage(text) {
+        popup.querySelector('#message').textContent = text;
+        popup.style.display = 'block';
+      }
+
+      function showPopupButtons() {
+        const popupButtons = document.createElement('div');
+        popupButtons.innerHTML = `
+          <button class="popupButton" onclick="claimReward()">Ödülünü Al!</button>
+          <button class="popupButton" onclick="playAgain()">Kapat</button>
+        `;
+        popup.appendChild(popupButtons);
+      }
+
+      window.playAgain = function () {
+    popup.style.display = 'none';
+    restartGame();
+  };
+
+      window.claimReward = function () {
+        window.location.href = 'https://jdmt.adj.st?adj_t=8fzsfbx&adj_redirect_ios=https%3A%2F%2Fapps.apple.com%2Ftr%2Fapp%2Fkim-gb-i-ster%2Fid1552759438&adj_redirect_android=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.solidict.catalog4p';
+      };
+
+      window.playAgain = function () {
+        popup.style.display = 'none';
+        resetGame();
+      };
+
+      window.restartGame = function () {
+        resetGame();
+      };
+
+      function resetGame() {
+        currentPlayer = 'X';
+        gameBoard = [
+          ['', '', '', '', '', '', ''],
+          ['', '', '', '', '', '', ''],
+          ['', '', '', '', '', '', ''],
+          ['', '', '', '', '', '', ''],
+          ['', '', '', '', '', '', ''],
+          ['', '', '', '', '', '', '']
+        ];
+        renderBoard();
+        message.textContent = '';
+        restartButton.style.display = 'none';
+        rewardButton.style.display = 'none';
+        popup.innerHTML = ''; // Popup içeriğini temizle
+      }
+
+      function makeMove(column) {
+        for (let row = 5; row >= 0; row--) {
+          if (gameBoard[row][column] === '') {
+            gameBoard[row][column] = currentPlayer;
+            return true;
+          }
+        }
+        return false;
+      }
+
+      function switchPlayer() {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      }
+
+      function makeBotMove() {
+  // Bot, rastgele bir hamle yapacak.
+  const validMoves = [];
+  for (let col = 0; col < 7; col++) {
+    if (gameBoard[0][col] === '') {
+      validMoves.push(col);
+    }
+  }
+
+  const randomColumn = validMoves[Math.floor(Math.random() * validMoves.length)];
+
+  // Bot, oyunu daha az kazanan bir şekilde oynamak için biraz daha fazla rasgelelik ekleyecek.
+  const shouldWin = Math.random() < 0.6; // %60 olasılıkla kazanma ihtimali
+
+  if (shouldWin) {
+    return randomColumn;
+  } else {
+    // %20 olasılıkla farklı bir hamle yapacak
+    const otherValidMoves = validMoves.filter(move => move !== randomColumn);
+    return otherValidMoves[Math.floor(Math.random() * otherValidMoves.length)];
+  }
+}
+
+      function playTurn(column) {
+        if (makeMove(column)) {
+          renderBoard();
+          if (checkWinner()) {
+            restartButton.style.display = 'block';
+            rewardButton.style.display = 'block';
+          } else {
+            switchPlayer();
+            if (currentPlayer === 'O') {
+              setTimeout(() => {
+                const botMove = makeBotMove();
+                playTurn(botMove);
+              }, 500);
+            }
+          }
+        }
+      }
+
+      cells.forEach((cell, index) => {
+        cell.addEventListener('click', () => {
+          if (currentPlayer === 'X') {
+            playTurn(index % 7);
+          }
+        });
+      });
+
+      restartButton.addEventListener('click', () => {
+        resetGame();
+      });
+
+      rewardButton.addEventListener('click', () => {
+        claimReward();
+      });
+
+      renderBoard();
+    });
+  </script>
+</head>
+<body>
+        <div id="titles">
+            <h1>Dörtle, MetaByte Kazan! </h1>
+            <h2>Rakibini yenmek için dikey, yatay veya çapraz olarak dört taşını sırala!</h2>
+  <div id="board">
+
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>    
+  </div>
+  <p id="message"></p>
+  <button id="restartButton">Tekrar Oyna</button>
+
+  <div class="popup">
+    <p id="message"></p>
+  </div>
+</body>
+</html>
